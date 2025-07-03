@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Instalar dependencias de sesión y Redis",
+			"command": "npm install express-session connect-redis redis @types/express-session --save",
+			"group": "build",
+			"isBackground": false
+		}
+	]
+}
