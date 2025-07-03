@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config'; // <-- Agrega esto
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -13,10 +14,21 @@ import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb+srv://ClusterBol:fede4363451@clusterbol.y9h22.mongodb.net/videoshop?retryWrites=true&w=majority&appName=ClusterBol'), // URL de conexión
-    RedisModule.forRoot({
-      type: 'single',
-      url: 'redis://default:zW0YWoixB6i84cCIWbCU7O4c7uaCbahK@redis-12332.crce181.sa-east-1-2.ec2.redns.redis-cloud.com:12332',
+    ConfigModule.forRoot({ isGlobal: true }), // <-- Agrega esto
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGODB_URI'),
+      }),
+    }),
+    RedisModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'single',
+        url: configService.get<string>('REDIS_STRING'),
+      }),
     }),
     UsuariosModule,
     ProductosModule,
